@@ -30,8 +30,8 @@ describe Dtw::Naive do
   end
 
   describe "#slope_pattern" do
-    it "defaults to 1, 1" do
-      expect(subject.slope_pattern).to eq [1, 1]
+    it "defaults to 1 from either side" do
+      expect(subject.slope_pattern).to match_array [[1,1], [0, 1], [1, 0]]
     end
 
     it "can be provided as an option" do

@@ -11,7 +11,7 @@ module Dtw
     end
 
     def slope_pattern
-      @slope_pattern ||= options.fetch(:slope_pattern, [1, 1])
+      @slope_pattern ||= options.fetch(:slope_pattern, [[1, 1], [0, 1], [1, 0]])
     end
 
     def window
@@ -50,7 +50,7 @@ module Dtw
       end
     end
 
-    def warping_matrix(g, i, j)
+    def warping_matrix(g, i, j, z = 0)
       return g[[i, j]] if g[[i, j]]
       d = distance(i, j)
 
@@ -64,21 +64,18 @@ module Dtw
         return d
       end
 
-      deletion = slope_weight * warping_matrix(g, i, j - slope_pattern.last) if (j - slope_pattern.last) >= 0
-      match = warping_matrix(g, i - 1, j - 1) if i > 0 && j > 0
-      insertion = slope_weight * warping_matrix(g, i - slope_pattern.first, j) if (i - slope_pattern.first) >= 0
+      pattern = slope_pattern.map do |(di, dj)|
+        next if ((i - di) < 0) || ((j - dj) < 0)
 
-      m = [deletion, match, insertion].compact.min
+        weight = slope_weight unless di == 1 && dj == 1
+        weight ||= 1
 
-      g[:path][[i, j]] = if m == match
-                           [i - 1, j - 1]
-                         elsif m == deletion
-                           [i, j - slope_pattern.last]
-                         elsif m == insertion
-                           [i - slope_pattern.first, j]
-                         end
+        [i - di, j - dj, weight * warping_matrix(g, i - di, j - dj, z + 1)]
+      end.compact.min_by { |(_, _, cost)| cost }
 
-      g[[i, j]] = m + d
+      g[:path][[i, j]] = pattern[0..1]
+
+      g[[i, j]] = pattern.last + d
     end
 
     def distance(i, j)
