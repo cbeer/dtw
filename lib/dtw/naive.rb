@@ -6,8 +6,8 @@ module Dtw
       @series = series
     end
 
-    def slope_pattern
-      @slope_pattern ||= options.fetch(:slope_pattern, [[1, 1, 1], [0, 1, 1], [1, 0, 1]])
+    def pattern
+      @pattern ||= options.fetch(:pattern, [[1, 1], [0, 1], [1, 0]])
     end
 
     def window
@@ -60,15 +60,35 @@ module Dtw
         return d
       end
 
-      pattern = slope_pattern.map do |(di, dj, weight)|
+      match = pattern.map do |(di, dj, weight)|
+        weight ||= 1
         next if ((i - di) < 0) || ((j - dj) < 0)
 
-        [i - di, j - dj, weight * warping_matrix(g, i - di, j - dj, z + 1)]
+        dii = di
+        djj = dj
+
+        cost = warping_matrix(g, i - di, j - dj, z + 1)
+
+        while dii > 1
+          dii -= 1
+          next if (i - dii) < 0
+          cost += warping_matrix(g, i - dii, j - dj, z + 1)
+        end
+
+        while djj > 1
+          djj -= 1
+          next if (j - djj) < 0
+          cost += warping_matrix(g, i - di, j - djj, z + 1)
+        end
+
+        [i - di, j - dj, weight * cost]
       end.compact.min_by { |(_, _, cost)| cost }
 
-      g[:path][[i, j]] = pattern[0..1]
+      match ||= [0, 0, warping_matrix(g, 0, 0), z + 1]
 
-      g[[i, j]] = pattern.last + d
+      g[:path][[i, j]] = match[0..1]
+
+      g[[i, j]] = match.last + d
     end
 
     def distance(i, j)

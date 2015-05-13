@@ -18,14 +18,14 @@ describe Dtw::Naive do
     end
   end
 
-  describe "#slope_pattern" do
+  describe "#pattern" do
     it "defaults to 1 from either side" do
-      expect(subject.slope_pattern).to match_array [[1, 1, 1], [0, 1, 1], [1, 0, 1]]
+      expect(subject.pattern).to match_array [[1, 1], [0, 1], [1, 0]]
     end
 
     it "can be provided as an option" do
-      subject = described_class.new slope_pattern: [2, 2]
-      expect(subject.slope_pattern).to eq [2, 2]
+      subject = described_class.new pattern: [2, 2]
+      expect(subject.pattern).to eq [2, 2]
     end
   end
 
@@ -55,12 +55,17 @@ describe Dtw::Naive do
     end
   end
 
-  describe "#matrix" do
+  describe "#path" do
     let(:series_a) { [1, 2, 2, 1, 0, 1, 1, 2, 1, 2] }
     let(:series_b) { [3, 4, 5, 3, 3, 2, 3, 4, 2, 3] }
-    subject { naive(series_a, series_b) }
+
     it "is correct" do
-      expect(subject.path).to match_array [[0, 0], [1, 1], [1, 2], [1, 3], [2, 4], [3, 5], [4, 5], [5, 5], [6, 5], [7, 6], [7, 7], [8, 8], [9, 9]]
+      expect(naive(series_a, series_b).path).to match_array [[0, 0], [1, 1], [1, 2], [1, 3], [2, 4], [3, 5], [4, 5], [5, 5], [6, 5], [7, 6], [7, 7], [8, 8], [9, 9]]
+    end
+
+    it "supports various patterns" do
+      pending "need better data"
+      expect(naive(series_a, series_b, pattern: [[1, 1], [2, 1], [1, 2]]).path).to match_array [[0, 0], [1, 1], [1, 2], [1, 3], [2, 4], [3, 5], [4, 5], [5, 5], [6, 5], [7, 6], [7, 7], [8, 8], [9, 9]]
     end
   end
 

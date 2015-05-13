@@ -19,7 +19,8 @@ def dump_matrix(h)
       end
       i1, j1 = h[:path][[i, j]]
 
-      if i1 < i && j1 < j
+      if i1.nil? || j1.nil?
+      elsif i1 < i && j1 < j
         print "╲     "
       elsif i1 < i
         print "_" * 6
@@ -41,5 +42,5 @@ def dump_matrix(h)
     print "\n"
   end
 
-  dump(h[:path]) if h[:path]
+  dump_matrix(h[:path]) if h[:path]
 end
