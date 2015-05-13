@@ -14,6 +14,10 @@ module Dtw
       @slope_pattern ||= options.fetch(:slope_pattern, [1, 1])
     end
 
+    def window
+      @window ||= options.fetch(:window, Window.new).size(series.first.length, series.last.length)
+    end
+
     def path
       @path ||= begin
         path = []
@@ -45,6 +49,10 @@ module Dtw
     def warping_matrix(g, i, j)
       return g[[i, j]] if g[[i, j]]
       d = distance(i, j)
+
+      if window && !window.include?(i, j)
+        return Float::INFINITY
+      end
 
       if i == 0 && j == 0
         g[:path][[i, j]] = [nil, nil]

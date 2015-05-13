@@ -1,4 +1,7 @@
 module Dtw
+  ##
+  # Implementation of Derivative Dynamic Time Warping
+  # from https://www.cs.rutgers.edu/~pazzani/Publications/sdm01.pdf
   class Derivative < Naive
     private
 

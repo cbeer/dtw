@@ -40,6 +40,19 @@ describe Dtw::Naive do
     end
   end
 
+  describe "#window" do
+    subject { naive([], []) }
+
+    it "defaults to the full set" do
+      expect(subject.window.r).to eq Float::INFINITY
+    end
+
+    it "can be provided as an option" do
+      subject = described_class.new [], [], window: Dtw::Window.new(5)
+      expect(subject.window.r).to eq 5
+    end
+  end
+
   describe "#matrix" do
     let(:series_a) { [1, 2, 2, 1, 0, 1, 1, 2, 1, 2] }
     let(:series_b) { [3, 4, 5, 3, 3, 2, 3, 4, 2, 3] }
