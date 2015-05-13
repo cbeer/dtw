@@ -36,6 +36,10 @@ module Dtw
       end
     end
 
+    def warp_factor
+      (path.length - series.first.length) / series.first.length.to_f
+    end
+
     private
 
     def matrix

@@ -53,6 +53,19 @@ describe Dtw::Naive do
     end
   end
 
+  describe "#warp_factor" do
+    let(:series_a) { [1, 2, 2, 1, 0, 1, 1, 2, 1, 2] }
+    let(:series_b) { [3, 4, 5, 3, 3, 2, 3, 4, 2, 3] }
+    it "reports no warping when the series are equal" do
+      expect(naive([1, 1, 1], [2, 2, 2]).warp_factor).to eq 0
+    end
+
+    it "reports some warping" do
+      w = naive(series_a, series_b).warp_factor
+      expect(w).to (be > 0).and(be < 1)
+    end
+  end
+
   describe "#matrix" do
     let(:series_a) { [1, 2, 2, 1, 0, 1, 1, 2, 1, 2] }
     let(:series_b) { [3, 4, 5, 3, 3, 2, 3, 4, 2, 3] }
