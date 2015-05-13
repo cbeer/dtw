@@ -2,8 +2,12 @@ module Dtw
   class Naive
     attr_reader :series, :options
     def initialize(*series)
-      @options = series.pop if series.last.is_a? Hash
+      @options = (series.pop if series.last.is_a? Hash) || {}
       @series = series
+    end
+
+    def slope_weight
+      @slope_weight ||= options.fetch(:slope_weight, 1)
     end
 
     def path
@@ -44,9 +48,9 @@ module Dtw
         return d
       end
 
-      deletion = warping_matrix(g, i, j - 1) if j > 0
+      deletion = slope_weight * warping_matrix(g, i, j - 1) if j > 0
       match = warping_matrix(g, i - 1, j - 1) if i > 0 && j > 0
-      insertion = warping_matrix(g, i - 1, j) if i > 0
+      insertion = slope_weight * warping_matrix(g, i - 1, j) if i > 0
 
       m = [deletion, match, insertion].compact.min
 
