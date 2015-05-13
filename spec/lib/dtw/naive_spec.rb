@@ -18,20 +18,9 @@ describe Dtw::Naive do
     end
   end
 
-  describe "#slope_weight" do
-    it "defaults to 1 " do
-      expect(subject.slope_weight).to eq 1
-    end
-
-    it "can be provided as an option" do
-      subject = described_class.new slope_weight: 2
-      expect(subject.slope_weight).to eq 2
-    end
-  end
-
   describe "#slope_pattern" do
     it "defaults to 1 from either side" do
-      expect(subject.slope_pattern).to match_array [[1,1], [0, 1], [1, 0]]
+      expect(subject.slope_pattern).to match_array [[1, 1, 1], [0, 1, 1], [1, 0, 1]]
     end
 
     it "can be provided as an option" do

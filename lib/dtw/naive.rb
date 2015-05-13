@@ -6,12 +6,8 @@ module Dtw
       @series = series
     end
 
-    def slope_weight
-      @slope_weight ||= options.fetch(:slope_weight, 1)
-    end
-
     def slope_pattern
-      @slope_pattern ||= options.fetch(:slope_pattern, [[1, 1], [0, 1], [1, 0]])
+      @slope_pattern ||= options.fetch(:slope_pattern, [[1, 1, 1], [0, 1, 1], [1, 0, 1]])
     end
 
     def window
@@ -64,11 +60,8 @@ module Dtw
         return d
       end
 
-      pattern = slope_pattern.map do |(di, dj)|
+      pattern = slope_pattern.map do |(di, dj, weight)|
         next if ((i - di) < 0) || ((j - dj) < 0)
-
-        weight = slope_weight unless di == 1 && dj == 1
-        weight ||= 1
 
         [i - di, j - dj, weight * warping_matrix(g, i - di, j - dj, z + 1)]
       end.compact.min_by { |(_, _, cost)| cost }
