@@ -29,6 +29,17 @@ describe Dtw::Naive do
     end
   end
 
+  describe "#slope_pattern" do
+    it "defaults to 1, 1" do
+      expect(subject.slope_pattern).to eq [1, 1]
+    end
+
+    it "can be provided as an option" do
+      subject = described_class.new slope_pattern: [2, 2]
+      expect(subject.slope_pattern).to eq [2, 2]
+    end
+  end
+
   describe "#matrix" do
     let(:series_a) { [1, 2, 2, 1, 0, 1, 1, 2, 1, 2] }
     let(:series_b) { [3, 4, 5, 3, 3, 2, 3, 4, 2, 3] }

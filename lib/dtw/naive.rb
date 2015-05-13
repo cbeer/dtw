@@ -10,6 +10,10 @@ module Dtw
       @slope_weight ||= options.fetch(:slope_weight, 1)
     end
 
+    def slope_pattern
+      @slope_pattern ||= options.fetch(:slope_pattern, [1, 1])
+    end
+
     def path
       @path ||= begin
         path = []
@@ -48,18 +52,18 @@ module Dtw
         return d
       end
 
-      deletion = slope_weight * warping_matrix(g, i, j - 1) if j > 0
+      deletion = slope_weight * warping_matrix(g, i, j - slope_pattern.last) if (j - slope_pattern.last) >= 0
       match = warping_matrix(g, i - 1, j - 1) if i > 0 && j > 0
-      insertion = slope_weight * warping_matrix(g, i - 1, j) if i > 0
+      insertion = slope_weight * warping_matrix(g, i - slope_pattern.first, j) if (i - slope_pattern.first) >= 0
 
       m = [deletion, match, insertion].compact.min
 
       g[:path][[i, j]] = if m == match
                            [i - 1, j - 1]
                          elsif m == deletion
-                           [i, j - 1]
+                           [i, j - slope_pattern.last]
                          elsif m == insertion
-                           [i - 1, j]
+                           [i - slope_pattern.first, j]
                          end
 
       g[[i, j]] = m + d
