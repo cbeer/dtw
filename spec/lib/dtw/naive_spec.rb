@@ -67,6 +67,15 @@ describe Dtw::Naive do
       pending "need better data"
       expect(naive(series_a, series_b, pattern: [[1, 1], [2, 1], [1, 2]]).path).to match_array [[0, 0], [1, 1], [1, 2], [1, 3], [2, 4], [3, 5], [4, 5], [5, 5], [6, 5], [7, 6], [7, 7], [8, 8], [9, 9]]
     end
+
+    xit "benchmarks" do
+      # Profile the code
+      result = Benchmark.measure do
+        naive(Array.new(1000, 1), Array.new(1000, 2)).path
+      end
+
+      puts result
+    end
   end
 
   def naive(*args)

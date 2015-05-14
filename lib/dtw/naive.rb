@@ -62,7 +62,7 @@ module Dtw
     end
 
     def warping_matrix(g, i, j, z = 0)
-      if g.matrix[i, j] # previously calculated
+      if i > 0 && j > 0 && g.matrix[i, j] # previously calculated
         g.matrix[i, j]
       elsif i < 0 || j < 0 || (window && !window.include?(i, j)) # outside window
         Float::INFINITY
@@ -93,10 +93,9 @@ module Dtw
 
           [i - di, j - dj, weight * cost]
         end.min_by { |(_, _, cost)| cost }
-
         g.path[i, j] = match[0..1]
-
-        g.matrix[i, j] = match[2] + distance(i, j)
+        cost = match[2] + distance(i, j)
+        g.matrix[i, j] = cost
       end
     end
   end
