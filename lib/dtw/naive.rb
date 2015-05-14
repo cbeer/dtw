@@ -1,3 +1,9 @@
+require 'matrix'
+
+class Dtw::Matrix < Matrix
+  public :"[]="
+end
+
 module Dtw
   class Naive
     attr_reader :series, :options
@@ -23,7 +29,7 @@ module Dtw
 
         while i > 0 || j > 0
           path.unshift [i, j]
-          i, j = matrix[:path][[i, j]]
+          i, j = matrix[:path][i, j]
         end
 
         path.unshift [0, 0]
@@ -40,14 +46,14 @@ module Dtw
 
     def matrix
       @matrix ||= begin
-        g = { path: {} }
+        g = { path: Dtw::Matrix.build(series.first.length, series.last.length) { nil }, matrix: Dtw::Matrix.build(series.first.length, series.last.length) { nil } }
         warping_matrix(g, series.first.length - 1, series.last.length - 1)
         g
       end
     end
 
     def warping_matrix(g, i, j, z = 0)
-      return g[[i, j]] if g[[i, j]]
+      return g[:matrix][i, j] if g[:matrix][i, j]
       d = distance(i, j)
 
       if window && !window.include?(i, j)
@@ -55,8 +61,8 @@ module Dtw
       end
 
       if i == 0 && j == 0
-        g[:path][[i, j]] = [nil, nil]
-        g[[i, j]] = d
+        g[:path][i, j] = [nil, nil]
+        g[:matrix][i, j] = d
         return d
       end
 
@@ -86,9 +92,9 @@ module Dtw
 
       match ||= [0, 0, warping_matrix(g, 0, 0), z + 1]
 
-      g[:path][[i, j]] = match[0..1]
+      g[:path][i, j] = match[0..1]
 
-      g[[i, j]] = match.last + d
+      g[:matrix][i, j] = match.last + d
     end
 
     def distance(i, j)
