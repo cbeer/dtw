@@ -42,6 +42,15 @@ module Dtw
       (path.length - series[0].length) / series[0].length.to_f
     end
 
+    ##
+    # Calculate the distance between two elements of the series.
+    #
+    # Override this method to provide custom distance measures.
+    def distance(i, j)
+      a, b = series[0][i], series[1][j]
+      (a - b)**2
+    end
+
     private
 
     def matrix
@@ -89,12 +98,6 @@ module Dtw
 
         g.matrix[i, j] = match[2] + distance(i, j)
       end
-    end
-
-    def distance(i, j)
-      a, b = series[0][i], series[1][j]
-      z = (a - b)**2
-      z
     end
   end
 end

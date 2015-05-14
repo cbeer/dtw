@@ -3,13 +3,13 @@ module Dtw
   # Implementation of Derivative Dynamic Time Warping
   # from https://www.cs.rutgers.edu/~pazzani/Publications/sdm01.pdf
   class Derivative < Naive
-    private
-
     def distance(i, j)
       a = derivative(series.first, i)
       b = derivative(series.last, j)
       (a - b)**2
     end
+
+    private
 
     def derivative(series, i)
       c = series[i]
