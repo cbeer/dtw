@@ -48,7 +48,14 @@ module Dtw
     # Override this method to provide custom distance measures.
     def distance(i, j)
       a, b = series[0][i], series[1][j]
-      (a - b)**2
+      aa = Array(a)
+      ab = Array(b)
+
+      d = aa.zip(ab).inject(0) do |memo, (v1, v2)|
+        memo + (v1 - v2)**2
+      end
+
+      d / aa.length.to_f
     end
 
     private
